@@ -1,0 +1,20 @@
+﻿ID,组别,场景,事实来源,具体故障动作,B0步骤,B1步骤,B2设计假设_非Oracle,设计失败码,最低证据
+N01,CONTROL,正常发布：全部门禁与闭合证据满足,CONTROLLED_PILOT,不注入；三阶段健康检查、构件digest及信号处置均正常,真实PR/测试/三阶段部署通过,真实签发并验证来源证明通过,CLOSED,,完整CI日志、artifact digest、上游事件及B2决策
+N02,CONTROL,经过授权的门禁豁免,CONTROLLED_PILOT,扫描门禁WAIVED；政策允许、批准人合法、批准时间早于cutoff,按真实豁免策略记录审批与门禁，不强行模拟工具原生waiver,来源证明按正常制品验证,CLOSED,,原始策略及批准事件、gate状态、B2决策
+N03,CONTROL,真实后继义务已履行,CONTROLLED_PILOT,在cutoff之后生成Finding，绑定准确Requirement，目标发布已通过验证,原有发布门禁照常运行（不宣称原生Finding关联）,对目标制品来源做真实验证,CLOSED,,Finding/Requirement/Target时间序列、源快照hash
+A101,A1,缺失有效处置,CONTROLLED_PILOT,删除SIG-002的有效Disposition，同时保留独立raw inventory,真实门禁如实运行；该缺陷只在证据处置层注入,真实证明验证；不假设它检查处置,OPEN,A1_EFFECTIVE_DISPOSITION_COUNT,raw与Disposition集合差异、失败码
+A102,A1,一个身份对应两条有效处置,CONTROLLED_PILOT,为SIG-002新增第二条effective Disposition,真实测试通过或按配置判定,真实来源证明照常校验,OPEN,A1_EFFECTIVE_DISPOSITION_COUNT,两条Disposition原件、时间与唯一性失败码
+A103,A1,候选未决,CONTROLLED_PILOT,SIG-002处置标记UNRESOLVED，对应Candidate状态OPEN,门禁实际运行；不要伪造标准门禁对业务未决的判断,来源证明验证,OPEN,A1_UNRESOLVED_SIGNAL;A1_CANDIDATE_UNRESOLVED,candidate/disposition历史、失败码
+A104,A1,未授权的处置排除,CONTROLLED_PILOT,对SIG-002进行AUTHORIZED_EXCLUDED，但actor不具备policy权限,保留真实策略与审批角色,正常artifact证明,OPEN,A1_UNAUTHORIZED_EXCLUSION,policy/actor/waiver配置哈希、失败码
+A105,A1,原始信号身份与摘要不匹配,CONTROLLED_PILOT,修改SIG-002原始payload但不更新其payload_sha256,真实测试与构件digest照常检查,验证真实构件；不假设构件来源证明能核验业务信号payload,OPEN,A1_SIGNAL_DIGEST_INVALID,payload原文与digest、摘要核验失败码
+A201,A2,cutoff之后到达的原始证据,CONTROLLED_PILOT,将SIG-002的发生/接收时间置于源release cutoff之后,B0照常执行；保留gate时间和注入时间,正常artifact证明,OPEN,A1_LATE_SIGNAL,cutoff/event_time/ingest_time三时点
+A202,A2,错误的Finding→Requirement身份绑定,CONTROLLED_PILOT,Finding创建关系指向不同Finding ID，保持target看似满足,B0按已配置流程运行,B1正常验证构件,OPEN,A2_FINDING_REQUIREMENT_INVALID,source finding与creates_requirement错误边、failure_code
+A203,A2,目标发布验证失败或未完成,CONTROLLED_PILOT,Finding后继关系有效，target到期但真实目标验证状态为FAIL,B0针对源发布照常运行；若做目标发布必须运行真实测试,按目标制品真实证明结果记录,OPEN,A2_TARGET_VALIDATION_FAILED,target due、目标验证结果、审计失败码
+A204,A2,后续试图改写历史冻结快照,CONTROLLED_PILOT,保留frozen payload/hash，修改observed/current snapshot载荷,保存源发布原始cutoff决策与后来更新事实,实际证明能力不被夸大为历史快照审计,OPEN,A2_FROZEN_SNAPSHOT_REWRITE,原frozen hash、后来的observed payload hash、历史结果保持值
+U01,NFI,无法独立确认raw signal总体边界,CONTROLLED_PILOT,移除collector complete及查询范围证明（保留已抽取信号）,真实门禁正常运行；记录缺失的是哪类原始证据,真实来源证明运行,OPEN,A1_SCOPE_NOT_ATTESTED,缺失材料清单及NFI标记，不得称已证实数据遗漏
+U02,NFI,Finding的源发布归因不明,CONTROLLED_PILOT,保留Finding触发事实，source_release_id置为null，不能将义务集合置空,真实门禁正常运行,来源证明照常执行,OPEN,A2_UNRESOLVED_SOURCE_ATTRIBUTION,finding观测事实、source归因NFI、未消失的义务
+B01,BASELINE,标准门禁应检测：真实单元测试失败,CONTROLLED_PILOT,设置INJECT_B01=1，使实际unittest用例失败；同步保存gate FAIL,实际执行失败测试，存原始exit code和报错,保留B0测试失败，不得用证明掩盖,OPEN,GATE_REQUIRED_FAILED,原始unittest失败stdout和工作流失败、B2 gate失败码
+B02,BASELINE,标准既有证明工具应检测：签发后制品替换,CONTROLLED_PILOT,在actions/attest签发后修改pyz字节并执行gh attestation verify,B0构件SHA pin也要实际核查，可能同样检出,真实gh attestation verify应拒绝已改字节的构件,OPEN,ARTIFACT_DIGEST_MISMATCH,签发前后制品SHA、gh CLI exit与attestation bundle
+ZH-R2,REAL_DATA,ZHFB R2：未决、失败门禁与cutoff,REAL_REQUIRES_NATIVE_EVIDENCE,无受控注入：仅接收二轮项目原始资料，经来源验收后重建,复核源系统门禁真实执行记录；不能声称green漏检,仅当实际部署相应工具时报告真实结果，否则N/A,NOT_PREJUDGED,,真实源记录ID、抽取规则、native/curated、独立Oracle
+ZH-R3,REAL_DATA,ZHFB R3：11:00 cutoff与11:10后发布smoke,REAL_REQUIRES_NATIVE_EVIDENCE,无受控注入：复核历史可见性及门禁策略,复核11:10 smoke是否准入门禁而非强制判违规,原系统未部署证明时记N/A,NOT_PREJUDGED,,cutoff策略、source gate记录、快照时刻及独立结论
+ZH-R4,REAL_DATA,ZHFB R4：6/6处置但快照仍frozen,REAL_REQUIRES_NATIVE_EVIDENCE,无受控注入：先取得为何frozen及后继右删失来源,还原全部实际门禁和release决策,按实际工具部署情况标注N/A,NOT_PREJUDGED,,原始冻结原因、状态历史、右删失说明与原始记录
