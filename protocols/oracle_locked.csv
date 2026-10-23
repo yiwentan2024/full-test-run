@@ -1,21 +1,22 @@
-﻿# oracle answers frozen at repo creation; derived from scenarios/manifest.json design expectations (preregistered)
+# oracle answers frozen at repo creation; derived from scenarios/manifest.json design expectations (preregistered)
+# ZH rows stay NOT_PREJUDGED until independently verified real project source records are provided.
 scenario_id,expected_decision,failure_codes,rationale,source
-N01,CLOSED,,正常发布：全部门禁与闭合证据满足；注入: 不注入；三阶段健康检查、构件digest及信号处置均正常,PREREGISTERED_DESIGN_EXPECTATION_FROM_scenarios_manifest
-N02,CLOSED,,经过授权的门禁豁免；注入: 扫描门禁WAIVED；政策允许、批准人合法、批准时间早于cutoff,PREREGISTERED_DESIGN_EXPECTATION_FROM_scenarios_manifest
-N03,CLOSED,,真实后继义务已履行；注入: 在cutoff之后生成Finding，绑定准确Requirement，目标发布已通过验证,PREREGISTERED_DESIGN_EXPECTATION_FROM_scenarios_manifest
-A101,OPEN,A1_EFFECTIVE_DISPOSITION_COUNT,缺失有效处置；注入: 删除SIG-002的有效Disposition，同时保留独立raw inventory,PREREGISTERED_DESIGN_EXPECTATION_FROM_scenarios_manifest
-A102,OPEN,A1_EFFECTIVE_DISPOSITION_COUNT,一个身份对应两条有效处置；注入: 为SIG-002新增第二条effective Disposition,PREREGISTERED_DESIGN_EXPECTATION_FROM_scenarios_manifest
-A103,OPEN,A1_UNRESOLVED_SIGNAL;A1_CANDIDATE_UNRESOLVED,候选未决；注入: SIG-002处置标记UNRESOLVED，对应Candidate状态OPEN,PREREGISTERED_DESIGN_EXPECTATION_FROM_scenarios_manifest
-A104,OPEN,A1_UNAUTHORIZED_EXCLUSION,未授权的处置排除；注入: 对SIG-002进行AUTHORIZED_EXCLUDED，但actor不具备policy权限,PREREGISTERED_DESIGN_EXPECTATION_FROM_scenarios_manifest
-A105,OPEN,A1_SIGNAL_DIGEST_INVALID,原始信号身份与摘要不匹配；注入: 修改SIG-002原始payload但不更新其payload_sha256,PREREGISTERED_DESIGN_EXPECTATION_FROM_scenarios_manifest
-A201,OPEN,A1_LATE_SIGNAL,cutoff之后到达的原始证据；注入: 将SIG-002的发生/接收时间置于源release cutoff之后,PREREGISTERED_DESIGN_EXPECTATION_FROM_scenarios_manifest
-A202,OPEN,A2_FINDING_REQUIREMENT_INVALID,错误的Finding→Requirement身份绑定；注入: Finding创建关系指向不同Finding ID，保持target看似满足,PREREGISTERED_DESIGN_EXPECTATION_FROM_scenarios_manifest
-A203,OPEN,A2_TARGET_VALIDATION_FAILED,目标发布验证失败或未完成；注入: Finding后继关系有效，target到期但真实目标验证状态为FAIL,PREREGISTERED_DESIGN_EXPECTATION_FROM_scenarios_manifest
-A204,OPEN,A2_FROZEN_SNAPSHOT_REWRITE,后续试图改写历史冻结快照；注入: 保留frozen payload/hash，修改observed/current snapshot载荷,PREREGISTERED_DESIGN_EXPECTATION_FROM_scenarios_manifest
-U01,OPEN,A1_SCOPE_NOT_ATTESTED,无法独立确认raw signal总体边界；注入: 移除collector complete及查询范围证明（保留已抽取信号）,PREREGISTERED_DESIGN_EXPECTATION_FROM_scenarios_manifest
-U02,OPEN,A2_UNRESOLVED_SOURCE_ATTRIBUTION,Finding的源发布归因不明；注入: 保留Finding触发事实，source_release_id置为null，不能将义务集合置空,PREREGISTERED_DESIGN_EXPECTATION_FROM_scenarios_manifest
-B01,OPEN,GATE_REQUIRED_FAILED,标准门禁应检测：真实单元测试失败；注入: 设置INJECT_B01=1，使实际unittest用例失败；同步保存gate FAIL,PREREGISTERED_DESIGN_EXPECTATION_FROM_scenarios_manifest
-B02,OPEN,ARTIFACT_DIGEST_MISMATCH,标准既有证明工具应检测：签发后制品替换；注入: 在actions/attest签发后修改pyz字节并执行gh attestation verify,PREREGISTERED_DESIGN_EXPECTATION_FROM_scenarios_manifest
-ZH-R2,PENDING,,ZHFB R2：未决、失败门禁与cutoff（等待真实原始记录核验）,PENDING_REAL_DATA
-ZH-R3,PENDING,,ZHFB R3：11:00 cutoff与11:10后发布smoke（等待真实原始记录核验）,PENDING_REAL_DATA
-ZH-R4,PENDING,,ZHFB R4：6/6处置但快照仍frozen（等待真实原始记录核验）,PENDING_REAL_DATA
+N01,CLOSED,,Normal release: all gates and closure evidence satisfied; no injection; three-stage health checks and signal dispositions all valid,PREREGISTERED_DESIGN_EXPECTATION
+N02,CLOSED,,Authorized gate waiver: normal path where an exception is properly authorized and recorded,PREREGISTERED_DESIGN_EXPECTATION
+N03,CLOSED,,Successor obligation fulfilled: requirement bound and target-release verification complete,PREREGISTERED_DESIGN_EXPECTATION
+A101,OPEN,A1_EFFECTIVE_DISPOSITION_COUNT,Missing valid disposition: a bounded upstream signal has no effective disposition,PREREGISTERED_DESIGN_EXPECTATION
+A102,OPEN,A1_EFFECTIVE_DISPOSITION_COUNT,Conflicting dispositions: two simultaneously valid dispositions for the same signal identity,PREREGISTERED_DESIGN_EXPECTATION
+A103,OPEN,A1_UNRESOLVED_SIGNAL;A1_CANDIDATE_UNRESOLVED,Undecided candidate: a candidate remains unresolved while gates are green,PREREGISTERED_DESIGN_EXPECTATION
+A104,OPEN,A1_UNAUTHORIZED_EXCLUSION,Unauthorized exclusion: a disposition is excluded without verifiable authorization,PREREGISTERED_DESIGN_EXPECTATION
+A105,OPEN,A1_SIGNAL_DIGEST_INVALID,Signal identity mismatch: raw signal identity and digest do not match,PREREGISTERED_DESIGN_EXPECTATION
+A201,OPEN,A1_LATE_SIGNAL,Late evidence: raw evidence arriving after cutoff must not backfill the historical decision,PREREGISTERED_DESIGN_EXPECTATION
+A202,OPEN,A2_FINDING_REQUIREMENT_INVALID,Wrong binding: Finding-to-Requirement identity binding is incorrect,PREREGISTERED_DESIGN_EXPECTATION
+A203,OPEN,A2_TARGET_VALIDATION_FAILED,Target validation missing: target-release verification failed or not completed,PREREGISTERED_DESIGN_EXPECTATION
+A204,OPEN,A2_FROZEN_SNAPSHOT_REWRITE,Snapshot rewrite: later attempt to rewrite a historical frozen snapshot,PREREGISTERED_DESIGN_EXPECTATION
+U01,OPEN,A1_SCOPE_NOT_ATTESTED,Scope unattested: raw-signal population boundary cannot be independently confirmed,PREREGISTERED_DESIGN_EXPECTATION
+U02,OPEN,A2_UNRESOLVED_SOURCE_ATTRIBUTION,Attribution unresolved: the Finding's source release cannot be independently confirmed,PREREGISTERED_DESIGN_EXPECTATION
+B01,OPEN,GATE_REQUIRED_FAILED,Baseline-detectable: real unit test failure; standard gates must block,PREREGISTERED_DESIGN_EXPECTATION
+B02,OPEN,ARTIFACT_DIGEST_MISMATCH,Baseline-detectable: artifact bytes substituted after signing; provenance tool must reject,PREREGISTERED_DESIGN_EXPECTATION
+ZH-R2,NOT_PREJUDGED,,Real retrospective R2: unresolved signals failed gates and cutoff; awaiting verified source records,PENDING_REAL_DATA
+ZH-R3,NOT_PREJUDGED,,Real retrospective R3: 11:00 cutoff vs 11:10 post-release smoke; awaiting verified source records,PENDING_REAL_DATA
+ZH-R4,NOT_PREJUDGED,,Real retrospective R4: 6/6 dispositions yet snapshot stays frozen; awaiting verified source records,PENDING_REAL_DATA
